@@ -1,27 +1,30 @@
 :root {
-  --bg-color: #0d0e12;
+  --bg-color: #0b111e; /* Fondo oscuro azulado */
   --text-color: #f1f5f9;
-  --glass-bg: rgba(22, 27, 34, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-input: rgba(255, 255, 255, 0.05);
-  --accent-color: #e50914;
-  --accent-hover: #ff1e27;
+  --glass-bg: rgba(15, 23, 42, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-input: rgba(255, 255, 255, 0.06);
+  --accent-color: #1d4ed8; /* Azul principal */
+  --accent-hover: #2563eb; /* Azul brillante hover */
   --radius-lg: 18px;
   --radius-md: 12px;
   --shadow-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 .light-theme {
-  --bg-color: #f8fafc;
+  --bg-color: #f0f4f9;
   --text-color: #0f172a;
   --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(0, 0, 0, 0.08);
   --glass-input: rgba(0, 0, 0, 0.04);
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
 body { background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; }
 
+/* Encabezado Glassmorphism */
 .glass-header {
   display: flex; justify-content: space-between; align-items: center; padding: 12px 35px;
   background: var(--glass-bg); backdrop-filter: blur(16px);
@@ -29,26 +32,57 @@ body { background-color: var(--bg-color); color: var(--text-color); min-height: 
 }
 
 .logo-container img { height: 45px; object-fit: contain; }
-.search-bar { display: flex; align-items: center; background: var(--glass-input); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 8px 16px; width: 350px; gap: 10px; }
+
+.search-bar { 
+  display: flex; align-items: center; background: var(--glass-input); 
+  border: 1px solid var(--glass-border); border-radius: var(--radius-md); 
+  padding: 8px 16px; width: 350px; gap: 10px; 
+}
 .search-bar input { background: transparent; border: none; color: var(--text-color); width: 100%; outline: none; }
 .icon { width: 20px; height: 20px; fill: currentColor; }
 
-.user-actions { display: flex; align-items: center; gap: 12px; }
-.btn-icon, .btn-icon-text { background: var(--glass-input); border: 1px solid var(--glass-border); color: var(--text-color); padding: 8px 14px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+/* Grupo de Botones Superiores (Tema, Cuenta, Carrito) */
+.user-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn-icon, .btn-icon-text { 
+  background: var(--glass-input); 
+  border: 1px solid var(--glass-border); 
+  color: var(--text-color); 
+  padding: 8px 14px; 
+  border-radius: var(--radius-md); 
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover, .btn-icon-text:hover { 
+  background: rgba(37, 99, 235, 0.15); 
+  border-color: var(--accent-color); 
+  color: var(--accent-hover);
+}
 
 .nav-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
 .badge { background: var(--accent-color); color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.75rem; }
 
-/* Botón Lápiz Admin */
+/* Botón Lápiz Admin (Azul Táctico) */
 .pencil-btn {
-  position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, #e50914, #b20710);
+  position: fixed; bottom: 25px; right: 25px; 
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
   color: white; border: none; padding: 14px 22px; border-radius: 50px; font-weight: 600; cursor: pointer;
-  display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(229, 9, 20, 0.4); z-index: 200;
+  display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(29, 78, 216, 0.4); z-index: 200;
+}
+
+.pencil-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(29, 78, 216, 0.6);
 }
 
 .hidden { display: none !important; }
 
-/* Modales */
+/* Modales y Formularios */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 300; }
 .glass-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 30px; width: 380px; box-shadow: var(--shadow-glow); position: relative; max-height: 90vh; overflow-y: auto; }
 .modal-large { width: 550px; }
@@ -61,7 +95,10 @@ body { background-color: var(--bg-color); color: var(--text-color); min-height: 
 
 .glass-input-field { width: 100%; padding: 10px 14px; margin-top: 10px; background: var(--glass-input); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-color); outline: none; }
 .form-row { display: flex; gap: 10px; }
+
 .btn-primary { width: 100%; padding: 12px; margin-top: 15px; background: var(--accent-color); color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
+.btn-primary:hover { background: var(--accent-hover); }
+
 .btn-secondary { width: 100%; padding: 10px; margin-top: 10px; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); border-radius: var(--radius-md); cursor: pointer; }
 
 /* Pestañas Admin */
