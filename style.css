@@ -1,22 +1,22 @@
 :root {
-  --bg-color: #0b111e; /* Fondo oscuro azulado */
+  --bg-color: #0a0f1d;
   --text-color: #f1f5f9;
-  --glass-bg: rgba(15, 23, 42, 0.75);
+  --glass-bg: rgba(15, 23, 42, 0.85);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-input: rgba(255, 255, 255, 0.06);
-  --accent-color: #1d4ed8; /* Azul principal */
-  --accent-hover: #2563eb; /* Azul brillante hover */
+  --glass-input: rgba(255, 255, 255, 0.07);
+  --accent-color: #2563eb; /* Azul Rey */
+  --accent-hover: #1d4ed8;
   --radius-lg: 18px;
   --radius-md: 12px;
-  --shadow-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
 .light-theme {
   --bg-color: #f0f4f9;
   --text-color: #0f172a;
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-input: rgba(0, 0, 0, 0.04);
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-input: rgba(0, 0, 0, 0.05);
   --accent-color: #2563eb;
   --accent-hover: #1d4ed8;
 }
@@ -24,7 +24,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
 body { background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; }
 
-/* Encabezado Glassmorphism */
 .glass-header {
   display: flex; justify-content: space-between; align-items: center; padding: 12px 35px;
   background: var(--glass-bg); backdrop-filter: blur(16px);
@@ -32,84 +31,56 @@ body { background-color: var(--bg-color); color: var(--text-color); min-height: 
 }
 
 .logo-container img { height: 45px; object-fit: contain; }
-
-.search-bar { 
-  display: flex; align-items: center; background: var(--glass-input); 
-  border: 1px solid var(--glass-border); border-radius: var(--radius-md); 
-  padding: 8px 16px; width: 350px; gap: 10px; 
-}
+.search-bar { display: flex; align-items: center; background: var(--glass-input); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 8px 16px; width: 350px; gap: 10px; }
 .search-bar input { background: transparent; border: none; color: var(--text-color); width: 100%; outline: none; }
 .icon { width: 20px; height: 20px; fill: currentColor; }
 
-/* Grupo de Botones Superiores (Tema, Cuenta, Carrito) */
 .user-actions { display: flex; align-items: center; gap: 10px; }
-
 .btn-icon, .btn-icon-text { 
-  background: var(--glass-input); 
-  border: 1px solid var(--glass-border); 
-  color: var(--text-color); 
-  padding: 8px 14px; 
-  border-radius: var(--radius-md); 
-  cursor: pointer; 
-  display: flex; 
-  align-items: center; 
-  gap: 8px; 
-  font-weight: 500;
-  transition: all 0.2s ease;
+  background: var(--glass-input); border: 1px solid var(--glass-border); color: var(--text-color); 
+  padding: 8px 14px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;
 }
-
-.btn-icon:hover, .btn-icon-text:hover { 
-  background: rgba(37, 99, 235, 0.15); 
-  border-color: var(--accent-color); 
-  color: var(--accent-hover);
-}
+.btn-icon:hover, .btn-icon-text:hover { background: rgba(37, 99, 235, 0.2); border-color: var(--accent-color); }
 
 .nav-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
 .badge { background: var(--accent-color); color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.75rem; }
 
-/* Botón Lápiz Admin (Azul Táctico) */
+/* Botón Lápiz Admin Azul Rey */
 .pencil-btn {
   position: fixed; bottom: 25px; right: 25px; 
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
-  color: white; border: none; padding: 14px 22px; border-radius: 50px; font-weight: 600; cursor: pointer;
-  display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(29, 78, 216, 0.4); z-index: 200;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: white !important; border: none; padding: 14px 22px; border-radius: 50px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.5); z-index: 200;
 }
-
-.pencil-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 12px 30px rgba(29, 78, 216, 0.6);
-}
+.pencil-btn:hover { transform: scale(1.05); }
 
 .hidden { display: none !important; }
 
-/* Modales y Formularios */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 300; }
+/* Modales */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 300; }
 .glass-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 30px; width: 380px; box-shadow: var(--shadow-glow); position: relative; max-height: 90vh; overflow-y: auto; }
-.modal-large { width: 550px; }
+.modal-large { width: 520px; }
 .close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; }
 
-/* Avatar Input */
-.avatar-picker { text-align: center; margin: 10px 0; }
-.avatar-label { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 0.8rem; opacity: 0.8; }
-.avatar-label img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); }
+/* Botones Azules */
+.btn-primary { width: 100%; padding: 12px; margin-top: 15px; background: var(--accent-color) !important; color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
+.btn-primary:hover { background: var(--accent-hover) !important; }
+.btn-secondary { width: 100%; padding: 10px; margin-top: 10px; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); border-radius: var(--radius-md); cursor: pointer; }
 
 .glass-input-field { width: 100%; padding: 10px 14px; margin-top: 10px; background: var(--glass-input); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-color); outline: none; }
+.glass-input-field option { background: #0a0f1d; color: #fff; }
 .form-row { display: flex; gap: 10px; }
-
-.btn-primary { width: 100%; padding: 12px; margin-top: 15px; background: var(--accent-color); color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
-.btn-primary:hover { background: var(--accent-hover); }
-
-.btn-secondary { width: 100%; padding: 10px; margin-top: 10px; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); border-radius: var(--radius-md); cursor: pointer; }
 
 /* Pestañas Admin */
 .admin-tabs { display: flex; gap: 10px; margin-top: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
 .tab-btn { background: transparent; border: none; color: var(--text-color); padding: 8px 12px; cursor: pointer; opacity: 0.6; }
 .tab-btn.active { opacity: 1; border-bottom: 2px solid var(--accent-color); font-weight: bold; }
 
-/* Reseñas y Estrellas */
-.divider { margin: 20px 0; border: none; border-top: 1px solid var(--glass-border); }
-.star-rating { display: flex; gap: 5px; font-size: 1.5rem; cursor: pointer; color: #555; }
-.star.active { color: #f59e0b; }
-.review-item { background: var(--glass-input); padding: 12px; border-radius: var(--radius-md); margin-top: 10px; border: 1px solid var(--glass-border); }
-.review-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
-.review-img { max-width: 100px; border-radius: 6px; margin-top: 8px; }
+/* Estilos de productos tipo Netflix */
+.category-row { margin: 30px 40px; }
+.category-row h2 { margin-bottom: 15px; font-size: 1.3rem; }
+.product-slider { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 10px; }
+.product-card { min-width: 200px; max-width: 200px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 12px; flex-shrink: 0; }
+.product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: var(--radius-md); }
+.product-card h3 { font-size: 1rem; margin-top: 8px; }
+.product-card .price { color: var(--accent-color); font-weight: bold; margin-top: 5px; }
