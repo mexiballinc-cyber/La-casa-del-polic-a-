@@ -4,7 +4,7 @@
   --glass-bg: rgba(15, 23, 42, 0.85);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-input: rgba(255, 255, 255, 0.07);
-  --accent-color: #2563eb; /* Azul Rey */
+  --accent-color: #2563eb;
   --accent-hover: #1d4ed8;
   --radius-lg: 18px;
   --radius-md: 12px;
@@ -42,7 +42,6 @@ body { background-color: var(--bg-color); color: var(--text-color); min-height: 
 }
 .btn-icon:hover, .btn-icon-text:hover { background: rgba(37, 99, 235, 0.2); border-color: var(--accent-color); }
 
-.nav-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
 .badge { background: var(--accent-color); color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.75rem; }
 
 /* Botón Lápiz Admin Azul Rey */
@@ -59,13 +58,13 @@ body { background-color: var(--bg-color); color: var(--text-color); min-height: 
 /* Modales */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 300; }
 .glass-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 30px; width: 380px; box-shadow: var(--shadow-glow); position: relative; max-height: 90vh; overflow-y: auto; }
-.modal-large { width: 520px; }
+.modal-large { width: 580px; }
 .close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; }
 
 /* Botones Azules */
 .btn-primary { width: 100%; padding: 12px; margin-top: 15px; background: var(--accent-color) !important; color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
 .btn-primary:hover { background: var(--accent-hover) !important; }
-.btn-secondary { width: 100%; padding: 10px; margin-top: 10px; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); border-radius: var(--radius-md); cursor: pointer; }
+.btn-secondary { width: 100%; padding: 10px; margin-top: 10px; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); border-radius: var(--radius-md); cursor: pointer; font-weight: 600; }
 
 .glass-input-field { width: 100%; padding: 10px 14px; margin-top: 10px; background: var(--glass-input); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-color); outline: none; }
 .glass-input-field option { background: #0a0f1d; color: #fff; }
@@ -73,14 +72,23 @@ body { background-color: var(--bg-color); color: var(--text-color); min-height: 
 
 /* Pestañas Admin */
 .admin-tabs { display: flex; gap: 10px; margin-top: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
-.tab-btn { background: transparent; border: none; color: var(--text-color); padding: 8px 12px; cursor: pointer; opacity: 0.6; }
+.tab-btn { background: transparent; border: none; color: var(--text-color); padding: 8px 12px; cursor: pointer; opacity: 0.6; font-size: 0.9rem; }
 .tab-btn.active { opacity: 1; border-bottom: 2px solid var(--accent-color); font-weight: bold; }
 
-/* Estilos de productos tipo Netflix */
+/* Lista Admin para Editar y Borrar */
+.admin-item-list { max-height: 180px; overflow-y: auto; margin-top: 8px; border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: rgba(0,0,0,0.2); padding: 5px; }
+.admin-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+.admin-item:last-child { border-bottom: none; }
+.admin-item-actions { display: flex; gap: 6px; }
+.btn-sm { padding: 4px 10px; border-radius: 6px; border: none; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+.btn-edit { background: #3b82f6; color: white; }
+.btn-delete { background: #ef4444; color: white; }
+
+/* Estilos de productos en la tienda */
 .category-row { margin: 30px 40px; }
-.category-row h2 { margin-bottom: 15px; font-size: 1.3rem; }
+.category-row h2 { margin-bottom: 15px; font-size: 1.3rem; text-transform: capitalize; }
 .product-slider { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 10px; }
 .product-card { min-width: 200px; max-width: 200px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 12px; flex-shrink: 0; }
-.product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: var(--radius-md); }
-.product-card h3 { font-size: 1rem; margin-top: 8px; }
-.product-card .price { color: var(--accent-color); font-weight: bold; margin-top: 5px; }
+.product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); }
+.product-card h3 { font-size: 1rem; margin-top: 8px; text-transform: capitalize; }
+.product-card .price { color: #60a5fa; font-weight: bold; margin-top: 5px; }
