@@ -1,171 +1,78 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root {
+  --bg-color: #0d0e12;
+  --text-color: #f1f5f9;
+  --glass-bg: rgba(22, 27, 34, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-input: rgba(255, 255, 255, 0.05);
+  --accent-color: #e50914;
+  --accent-hover: #ff1e27;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --shadow-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
-body {
-  background-color: #141414;
-  color: #fff;
+.light-theme {
+  --bg-color: #f8fafc;
+  --text-color: #0f172a;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-input: rgba(0, 0, 0, 0.04);
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 40px;
-  background-color: #000;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; }
+
+.glass-header {
+  display: flex; justify-content: space-between; align-items: center; padding: 12px 35px;
+  background: var(--glass-bg); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #e50914;
-}
+.logo-container img { height: 45px; object-fit: contain; }
+.search-bar { display: flex; align-items: center; background: var(--glass-input); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 8px 16px; width: 350px; gap: 10px; }
+.search-bar input { background: transparent; border: none; color: var(--text-color); width: 100%; outline: none; }
+.icon { width: 20px; height: 20px; fill: currentColor; }
 
-.search-bar input {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  outline: none;
-}
+.user-actions { display: flex; align-items: center; gap: 12px; }
+.btn-icon, .btn-icon-text { background: var(--glass-input); border: 1px solid var(--glass-border); color: var(--text-color); padding: 8px 14px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
-.search-bar button {
-  padding: 8px;
-  border: none;
-  background: #e50914;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
+.nav-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.badge { background: var(--accent-color); color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.75rem; }
 
-.user-actions button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.2rem;
-  margin-left: 15px;
-  cursor: pointer;
-}
-
-/* Lápiz Flotante para Administradores */
+/* Botón Lápiz Admin */
 .pencil-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #e50914;
-  color: white;
-  border: none;
-  padding: 15px 20px;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  z-index: 200;
+  position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, #e50914, #b20710);
+  color: white; border: none; padding: 14px 22px; border-radius: 50px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(229, 9, 20, 0.4); z-index: 200;
 }
 
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
 
 /* Modales */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 300;
-}
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 300; }
+.glass-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 30px; width: 380px; box-shadow: var(--shadow-glow); position: relative; max-height: 90vh; overflow-y: auto; }
+.modal-large { width: 550px; }
+.close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; }
 
-.modal-content {
-  background: #222;
-  padding: 30px;
-  border-radius: 8px;
-  width: 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  position: relative;
-}
+/* Avatar Input */
+.avatar-picker { text-align: center; margin: 10px 0; }
+.avatar-label { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 0.8rem; opacity: 0.8; }
+.avatar-label img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); }
 
-.close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
+.glass-input-field { width: 100%; padding: 10px 14px; margin-top: 10px; background: var(--glass-input); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-color); outline: none; }
+.form-row { display: flex; gap: 10px; }
+.btn-primary { width: 100%; padding: 12px; margin-top: 15px; background: var(--accent-color); color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
+.btn-secondary { width: 100%; padding: 10px; margin-top: 10px; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); border-radius: var(--radius-md); cursor: pointer; }
 
-.modal-content input {
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  width: 100%;
-}
+/* Pestañas Admin */
+.admin-tabs { display: flex; gap: 10px; margin-top: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
+.tab-btn { background: transparent; border: none; color: var(--text-color); padding: 8px 12px; cursor: pointer; opacity: 0.6; }
+.tab-btn.active { opacity: 1; border-bottom: 2px solid var(--accent-color); font-weight: bold; }
 
-.modal-content button[type="submit"] {
-  padding: 10px;
-  background: #e50914;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-#auth-toggle-link {
-  color: #e50914;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-#btn-logout {
-  padding: 8px;
-  background: #444;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* Filas Estilo Netflix */
-.category-row {
-  margin: 30px 40px;
-}
-
-.category-row h2 {
-  margin-bottom: 15px;
-  font-size: 1.4rem;
-}
-
-.product-slider {
-  display: flex;
-  gap: 15px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-}
-
-.product-card {
-  min-width: 180px;
-  background: #2f2f2f;
-  border-radius: 6px;
-  padding: 10px;
-  flex-shrink: 0;
-}
-
-.product-card img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 4px;
-}
+/* Reseñas y Estrellas */
+.divider { margin: 20px 0; border: none; border-top: 1px solid var(--glass-border); }
+.star-rating { display: flex; gap: 5px; font-size: 1.5rem; cursor: pointer; color: #555; }
+.star.active { color: #f59e0b; }
+.review-item { background: var(--glass-input); padding: 12px; border-radius: var(--radius-md); margin-top: 10px; border: 1px solid var(--glass-border); }
+.review-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
+.review-img { max-width: 100px; border-radius: 6px; margin-top: 8px; }
