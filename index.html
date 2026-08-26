@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Casa del Policía - Tienda</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="dark-theme">
 
@@ -14,7 +14,7 @@
       <img id="site-logo" src="https://i.imgur.com/9W9C2TC.png" alt="La Casa del Policía">
     </div>
     
-    <div class="search-bar glass-input">
+    <div class="search-bar">
       <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/></svg>
       <input type="text" id="search-input" placeholder="Buscar equipamiento, accesorios...">
     </div>
@@ -31,23 +31,24 @@
       </button>
 
       <button id="btn-cart" class="btn-icon-text cart-btn">
-        <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M17,18A2,2 0 0,1 19,20A2,2 0 0,1 17,22A2,2 0 0,1 15,20A2,2 0 0,1 17,18M1,2H4.27L5.21,4H20A1,1 0 0,1 21,5C21,5.17 20.95,5.34 20.88,5.5L17.3,11.97C16.96,12.58 16.3,13 15.55,13H8.1L7.2,14.63L7.17,14.75A0.25,0.25 0 0,0 7.42,15H19V17H7C5.89,17 5,16.1 5,15C5,14.65 5.09,14.32 5.24,14.04L6.6,11.59L3,4H1V2M7,18A2,2 0 0,1 9,20A2,2 0 0,1 7,18Z"/></svg>
+        <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M17,18A2,2 0 0,1 19,20A2,2 0 0,1 17,22A2,2 0 0,1 15,20A2,2 0 0,1 17,18M1,2H4.27L5.21,4H20A1,1 0 0,1 21,5C21,5.17 20.95,5.34 20.88,5.5L17.3,11.97C16.96,12.58 16.3,13 15.55,13H8.1L7.2,14.63L7.17,14.75A0.25,0.25 0 0,0 7.42,15H19V17H7C5.89,17 5,16.1 5,15C5,14.65 5.09,14.32 5.24,14.04L6.6,11.59L3,4H1V2M7,18A2,2 0 0,1 9,20A2,2 0 0,1 7,22A2,2 0 0,1 5,20A2,2 0 0,1 7,18Z"/></svg>
         <span id="cart-count" class="badge">0</span>
       </button>
     </div>
   </header>
 
-  <!-- Botón Flotante Lápiz Admin -->
+  <!-- Botón Lápiz Admin (Azul Rey) -->
   <button id="admin-pencil-btn" class="pencil-btn hidden">
     <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/></svg>
     <span>Gestionar Tienda</span>
   </button>
 
-  <!-- Modal Auth (Login/Registro con Foto de Galería) -->
-  <div id="auth-modal" class="modal">
+  <!-- Modal Auth -->
+  <div id="auth-modal" class="modal hidden">
     <div class="modal-content glass-card">
+      <span id="close-auth" class="close">&times;</span>
       <h2 id="auth-title">Iniciar Sesión</h2>
-      <p style="font-size: 0.85rem; opacity: 0.8;">Ingresa a tu cuenta para continuar.</p>
+      <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">Ingresa tus datos para continuar.</p>
       
       <form id="auth-form">
         <div id="avatar-picker-container" class="avatar-picker hidden">
@@ -68,89 +69,48 @@
     </div>
   </div>
 
-  <!-- Modal Admin (Agregar Producto / Categoría) -->
+  <!-- Modal Admin (Gestionar Tienda) -->
   <div id="admin-modal" class="modal hidden">
     <div class="modal-content glass-card modal-large">
       <span id="close-admin" class="close">&times;</span>
-      <h2> Panel de Administración</h2>
+      <h2>Panel de Administración</h2>
 
-      <!-- Pestañas del Admin -->
       <div class="admin-tabs">
         <button id="tab-btn-product" class="tab-btn active">Nuevo Producto</button>
         <button id="tab-btn-category" class="tab-btn">Nueva Categoría</button>
       </div>
 
-      <!-- Formulario 1: Producto -->
+      <!-- Formulario Nuevo Producto -->
       <form id="form-add-product" class="admin-tab-content">
         <input type="text" id="prod-name" placeholder="Nombre del Producto" class="glass-input-field" required>
-        <textarea id="prod-desc" placeholder="Descripción detallada..." class="glass-input-field" rows="2"></textarea>
+        <textarea id="prod-desc" placeholder="Descripción del producto..." class="glass-input-field" rows="2"></textarea>
         
         <div class="form-row">
-          <input type="number" id="prod-price" placeholder="Precio ($)" class="glass-input-field" required>
+          <input type="number" id="prod-price" placeholder="Precio ($)" class="glass-input-field" step="0.01" required>
           <select id="prod-category" class="glass-input-field" required>
-            <option value="">Selecciona Categoría...</option>
+            <option value="">Cargando categorías...</option>
           </select>
         </div>
 
-        <div class="form-group">
-          <label>Imágenes del Producto (URLs separadas por coma):</label>
-          <input type="text" id="prod-images" placeholder="http://img1.jpg, http://img2.jpg" class="glass-input-field" required>
-        </div>
-
-        <div class="form-group">
-          <label>Variantes (Colores/Tallas separados por coma):</label>
-          <input type="text" id="prod-variants" placeholder="Negro, Camuflaje, Talla M, Talla L" class="glass-input-field">
-        </div>
+        <input type="text" id="prod-images" placeholder="URL de la Imagen (Ej: https://i.imgur.com/...)" class="glass-input-field" required>
+        <input type="text" id="prod-variants" placeholder="Variantes separadas por coma (Ej: Negro, Azul, Talla M)" class="glass-input-field">
 
         <button type="submit" class="btn-primary">Guardar Producto</button>
       </form>
 
-      <!-- Formulario 2: Categoría -->
+      <!-- Formulario Nueva Categoría -->
       <form id="form-add-category" class="admin-tab-content hidden">
-        <input type="text" id="cat-name" placeholder="Nombre de la Categoría (Ej. Chalecos)" class="glass-input-field" required>
+        <input type="text" id="cat-name" placeholder="Nombre de la Categoría (Ej: Chalecos Tácticos)" class="glass-input-field" required>
         <button type="submit" class="btn-primary">Crear Categoría</button>
       </form>
     </div>
   </div>
 
-  <!-- Modal Detalle del Producto + Reseñas -->
-  <div id="product-modal" class="modal hidden">
-    <div class="modal-content glass-card modal-large">
-      <span id="close-product" class="close">&times;</span>
-      <div id="product-detail-body">
-        <!-- Renderizado dinámico del producto y sus variantes -->
-      </div>
-
-      <hr class="divider">
-
-      <!-- Sección de Reseñas de Clientes -->
-      <div class="reviews-section">
-        <h3>Opiniones del Producto</h3>
-        
-        <form id="review-form" class="review-form">
-          <div class="star-rating">
-            <span class="star" data-value="1">★</span>
-            <span class="star" data-value="2">★</span>
-            <span class="star" data-value="3">★</span>
-            <span class="star" data-value="4">★</span>
-            <span class="star" data-value="5">★</span>
-          </div>
-          <textarea id="review-comment" placeholder="Escribe tu opinión sobre el producto..." class="glass-input-field" rows="2" required></textarea>
-          <input type="text" id="review-img" placeholder="URL de foto opcional de tu producto" class="glass-input-field">
-          <button type="submit" class="btn-primary">Publicar Opinión</button>
-        </form>
-
-        <div id="reviews-container" class="reviews-container">
-          <!-- Las opiniones de los clientes aparecerán aquí -->
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <!-- Catalogo Principal en Filas -->
   <main id="store-rows">
-    <!-- Contenido Netflix -->
+    <!-- Se llena automáticamente con productos de Firebase -->
   </main>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=2"></script>
 </body>
 </html>
