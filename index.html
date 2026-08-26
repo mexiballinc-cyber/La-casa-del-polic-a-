@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Casa del Policía - Tienda</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Encabezado / Navegación -->
+  <header>
+    <div class="logo">La Casa del Policía</div>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Buscar productos...">
+      <button id="btn-search">🔍</button>
+    </div>
+    <div class="user-actions">
+      <button id="btn-theme" title="Cambiar Tema">🌙</button>
+      <button id="btn-auth-modal">Cuenta</button>
+      <button id="btn-cart">🛒 <span id="cart-count">0</span></button>
+    </div>
+  </header>
+
+  <!-- Botón del Lápiz (Solo visible para Administradores) -->
+  <button id="admin-pencil-btn" class="pencil-btn hidden">✏️ Editar Tienda</button>
+
+  <!-- Modal de Autenticación (Login / Registro) -->
+  <div id="auth-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="close-auth" class="close">&times;</span>
+      <h2 id="auth-title">Iniciar Sesión</h2>
+      <form id="auth-form">
+        <input type="email" id="auth-email" placeholder="Correo electrónico" required>
+        <input type="password" id="auth-password" placeholder="Contraseña" required>
+        <button type="submit" id="auth-submit-btn">Entrar</button>
+      </form>
+      <p id="auth-toggle-text">¿No tienes cuenta? <span id="auth-toggle-link">Regístrate</span></p>
+      <button id="btn-logout" class="hidden">Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <!-- Vista Principal de la Tienda (Filas tipo Netflix) -->
+  <main id="store-rows">
+    <!-- Las categorías y productos se cargan dinámicamente desde JS -->
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
