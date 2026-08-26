@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Casa del Policía - Tienda</title>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body class="dark-theme">
 
@@ -21,11 +21,10 @@
 
     <div class="user-actions">
       <button id="btn-theme" class="btn-icon" title="Cambiar Tema">
-        <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12A10 10 0 0 0 12 22A10 10 0 0 0 22 12A10 10 0 0 0 12 2M12 4A8 8 0 0 1 20 12A8 8 0 0 1 12 20V4Z"/></svg>
+        <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12A10 10 0 0 0 12 22A10 10 0 0 0 12 4A8 8 0 0 0 12 20V4Z"/></svg>
       </button>
 
       <button id="btn-auth-modal" class="btn-icon-text">
-        <img id="user-avatar-nav" class="nav-avatar hidden" src="" alt="Avatar">
         <svg id="default-user-icon" class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/></svg>
         <span id="auth-btn-label">Cuenta</span>
       </button>
@@ -43,29 +42,39 @@
     <span>Gestionar Tienda</span>
   </button>
 
-  <!-- Modal Auth -->
+  <!-- Modal Auth / Perfil -->
   <div id="auth-modal" class="modal hidden">
     <div class="modal-content glass-card">
       <span id="close-auth" class="close">&times;</span>
-      <h2 id="auth-title">Iniciar Sesión</h2>
-      <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">Ingresa tus datos para continuar.</p>
       
-      <form id="auth-form">
-        <div id="avatar-picker-container" class="avatar-picker hidden">
-          <label for="auth-avatar-input" class="avatar-label">
-            <img id="avatar-preview" src="https://via.placeholder.com/80?text=Foto" alt="Preview">
-            <span>Elegir foto de galería</span>
-          </label>
-          <input type="file" id="auth-avatar-input" accept="image/*" class="hidden">
+      <!-- VISTA 1: Formulario de Login / Registro -->
+      <div id="auth-logged-out-view">
+        <h2 id="auth-title">Iniciar Sesión</h2>
+        <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">Ingresa tus datos para continuar.</p>
+        
+        <form id="auth-form">
+          <input type="email" id="auth-email" placeholder="Correo electrónico" class="glass-input-field" required>
+          <input type="password" id="auth-password" placeholder="Contraseña" class="glass-input-field" required>
+          <button type="submit" id="auth-submit-btn" class="btn-primary">Entrar</button>
+        </form>
+        
+        <p id="auth-toggle-text" style="margin-top: 15px; text-align: center; font-size: 0.9rem;">
+          ¿No tienes cuenta? <span id="auth-toggle-link" style="color: var(--accent-color); cursor: pointer; font-weight: bold;">Regístrate</span>
+        </p>
+      </div>
+
+      <!-- VISTA 2: Perfil del Usuario -->
+      <div id="auth-logged-in-view" class="hidden" style="text-align: center;">
+        <h2>Mi Perfil</h2>
+        <div style="margin: 20px 0;">
+          <div style="width: 70px; height: 70px; background: var(--accent-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; margin: 0 auto 10px auto;" id="profile-initial">U</div>
+          <p id="user-display-email" style="font-weight: bold; font-size: 1.1rem; word-break: break-all;"></p>
+          <p id="user-display-role" style="font-size: 0.85rem; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600;"></p>
         </div>
 
-        <input type="email" id="auth-email" placeholder="Correo electrónico" class="glass-input-field" required>
-        <input type="password" id="auth-password" placeholder="Contraseña" class="glass-input-field" required>
-        <button type="submit" id="auth-submit-btn" class="btn-primary">Entrar</button>
-      </form>
-      
-      <p id="auth-toggle-text">¿No tienes cuenta? <span id="auth-toggle-link">Regístrate</span></p>
-      <button id="btn-logout" class="btn-secondary hidden">Cerrar Sesión</button>
+        <button id="btn-logout" class="btn-secondary" style="border-color: #ef4444; color: #ef4444;">Cerrar Sesión</button>
+      </div>
+
     </div>
   </div>
 
@@ -76,12 +85,24 @@
       <h2>Panel de Administración</h2>
 
       <div class="admin-tabs">
-        <button id="tab-btn-product" class="tab-btn active">Nuevo Producto</button>
+        <button id="tab-btn-inventory" class="tab-btn active">Inventario / Editar</button>
+        <button id="tab-btn-product" class="tab-btn">Nuevo Producto</button>
         <button id="tab-btn-category" class="tab-btn">Nueva Categoría</button>
       </div>
 
-      <!-- Formulario Nuevo Producto -->
-      <form id="form-add-product" class="admin-tab-content">
+      <!-- TAB 1: Lista de Productos y Categorías (Editar/Eliminar) -->
+      <div id="tab-content-inventory" class="admin-tab-content">
+        <h3 style="margin-top: 10px; font-size: 1.05rem;">Productos Existentes</h3>
+        <div id="admin-product-list" class="admin-item-list">Cargando...</div>
+
+        <h3 style="margin-top: 20px; font-size: 1.05rem;">Categorías Existentes</h3>
+        <div id="admin-category-list" class="admin-item-list">Cargando...</div>
+      </div>
+
+      <!-- TAB 2: Formulario Nuevo / Editar Producto -->
+      <form id="form-add-product" class="admin-tab-content hidden">
+        <h3 id="form-product-title" style="margin-bottom: 5px;">Crear Producto</h3>
+        <input type="hidden" id="prod-id-edit" value="">
         <input type="text" id="prod-name" placeholder="Nombre del Producto" class="glass-input-field" required>
         <textarea id="prod-desc" placeholder="Descripción del producto..." class="glass-input-field" rows="2"></textarea>
         
@@ -92,25 +113,28 @@
           </select>
         </div>
 
-        <input type="text" id="prod-images" placeholder="URL de la Imagen (Ej: https://i.imgur.com/...)" class="glass-input-field" required>
+        <input type="text" id="prod-images" placeholder="URL de Imagen (Ej: https://i.imgur.com/...)" class="glass-input-field" required>
         <input type="text" id="prod-variants" placeholder="Variantes separadas por coma (Ej: Negro, Azul, Talla M)" class="glass-input-field">
 
-        <button type="submit" class="btn-primary">Guardar Producto</button>
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" id="btn-save-product" class="btn-primary">Guardar Producto</button>
+          <button type="button" id="btn-cancel-edit-prod" class="btn-secondary hidden" style="margin-top: 15px;">Cancelar</button>
+        </div>
       </form>
 
-      <!-- Formulario Nueva Categoría -->
+      <!-- TAB 3: Formulario Nueva Categoría -->
       <form id="form-add-category" class="admin-tab-content hidden">
-        <input type="text" id="cat-name" placeholder="Nombre de la Categoría (Ej: Chalecos Tácticos)" class="glass-input-field" required>
+        <input type="text" id="cat-name" placeholder="Nombre de Categoría (Ej: Chalecos Tácticos)" class="glass-input-field" required>
         <button type="submit" class="btn-primary">Crear Categoría</button>
       </form>
     </div>
   </div>
 
-  <!-- Catalogo Principal en Filas -->
+  <!-- Catalogo Principal -->
   <main id="store-rows">
     <!-- Se llena automáticamente con productos de Firebase -->
   </main>
 
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=4"></script>
 </body>
 </html>
