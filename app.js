@@ -15,6 +15,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Lista de correos administradores (en minúsculas)
 const ADMIN_EMAILS = ["jgonzalezgutierrez1@bcedu.mx"];
 
 // Elementos DOM
@@ -22,8 +23,6 @@ const authModal = document.getElementById('auth-modal');
 const btnAuthModal = document.getElementById('btn-auth-modal');
 const closeAuth = document.getElementById('close-auth');
 const authForm = document.getElementById('auth-form');
-const authEmailInput = document.getElementById('auth-email');
-const authPasswordInput = document.getElementById('auth-password');
 const pencilBtn = document.getElementById('admin-pencil-btn');
 const btnLogout = document.getElementById('btn-logout');
 const authToggleLink = document.getElementById('auth-toggle-link');
@@ -40,7 +39,7 @@ const storeRows = document.getElementById('store-rows');
 
 let isLoginMode = true;
 
-// Abrir/Cerrar Modales
+// Modales
 btnAuthModal.addEventListener('click', () => authModal.classList.remove('hidden'));
 closeAuth.addEventListener('click', () => authModal.classList.add('hidden'));
 
@@ -50,7 +49,7 @@ pencilBtn.addEventListener('click', () => {
 });
 closeAdmin.addEventListener('click', () => adminModal.classList.add('hidden'));
 
-// Switchear Pestañas Admin
+// Pestañas Admin
 tabBtnProduct.addEventListener('click', () => {
   tabBtnProduct.classList.add('active'); tabBtnCategory.classList.remove('active');
   formAddProduct.classList.remove('hidden'); formAddCategory.classList.add('hidden');
@@ -60,78 +59,111 @@ tabBtnCategory.addEventListener('click', () => {
   formAddCategory.classList.remove('hidden'); formAddProduct.classList.add('hidden');
 });
 
-// Switchear Login/Registro
+// Cambiar entre Login / Registro
 authToggleLink.addEventListener('click', () => {
   isLoginMode = !isLoginMode;
   authTitle.textContent = isLoginMode ? "Iniciar Sesión" : "Crear Cuenta";
   authToggleLink.textContent = isLoginMode ? "Regístrate" : "Inicia Sesión";
 });
 
-// Submit Login / Registro
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const email = authEmailInput.value.trim();
-  const password = authPasswordInput.value;
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
 
   try {
     if (isLoginMode) {
       await signInWithEmailAndPassword(auth, email, password);
     } else {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      const role = ADMIN_EMAILS.includes(email) ? "admin" : "client";
-      await setDoc(doc(db, "users", user.uid), { email, role });
+      const isUserAdmin = ADMIN_EMAILS.includes(email.toLowerCase());
+      await setDoc(doc(db, "users", userCredential.user.uid), { 
+        email: email, 
+        role: isUserAdmin ? "admin" : "client" 
+      });
     }
     authModal.classList.add('hidden');
     authForm.reset();
-  } catch (error) { alert("Error: " + error.message); }
+  } catch (error) { 
+    alert("Error de Autenticación: " + error.message); 
+  }
 });
 
 btnLogout.addEventListener('click', () => signOut(auth));
 
-// Estado de la Sesión
+// DETECCIÓN DE SESIÓN MEJORADA
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     btnAuthModal.querySelector('#auth-btn-label').textContent = "Mi Perfil";
     btnLogout.classList.remove('hidden');
-
-    const userDoc = await getDoc(doc(docRef(user.uid)));
-    const role = (userDoc.exists() && userDoc.data().role) ? userDoc.data().role : (ADMIN_EMAILS.includes(user.email) ? "admin" : "client");
     
-    if (role === "admin") pencilBtn.classList.remove('hidden');
-    else pencilBtn.classList.add('hidden');
+    const userEmail = (user.email || "").toLowerCase();
+    
+    // 1. Verificación directa por correo
+    let isAdmin = ADMIN_EMAILS.includes(userEmail);
+
+    // 2. Si no es por correo, verificar Firestore
+    if (!isAdmin) {
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists() && userDoc.data().role === "admin") {
+          isAdmin = true;
+        }
+      } catch (err) {
+        console.error("Error al verificar rol en base de datos:", err);
+      }
+    }
+
+    // Mostrar u ocultar el botón del lápiz
+    if (isAdmin) {
+      pencilBtn.classList.remove('hidden');
+    } else {
+      pencilBtn.classList.add('hidden');
+    }
 
   } else {
     btnAuthModal.querySelector('#auth-btn-label').textContent = "Cuenta";
     btnLogout.classList.add('hidden');
     pencilBtn.classList.add('hidden');
   }
+  
   loadStoreProducts();
 });
 
-function docRef(uid) { return doc(db, "users", uid); }
-
-// Cargar Categorías en el Select
+// Cargar Categorías
 async function loadCategories() {
-  prodCategorySelect.innerHTML = `<option value="">Selecciona Categoría...</option>`;
-  const querySnapshot = await getDocs(collection(db, "categories"));
-  querySnapshot.forEach((docSnap) => {
-    const cat = docSnap.data();
-    prodCategorySelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
-  });
+  try {
+    prodCategorySelect.innerHTML = `<option value="">Selecciona Categoría...</option>`;
+    const querySnapshot = await getDocs(collection(db, "categories"));
+    querySnapshot.forEach((docSnap) => {
+      const cat = docSnap.data();
+      prodCategorySelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
+    });
+  } catch (err) {
+    console.error("Error cargando categorías:", err);
+  }
 }
 
 // Crear Categoría
 formAddCategory.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const name = document.getElementById('cat-name').value.trim();
-  await addDoc(collection(db, "categories"), { name });
-  alert("Categoría creada con éxito!");
-  document.getElementById('cat-name').value = "";
-  loadCategories();
+  const nameInput = document.getElementById('cat-name');
+  const catName = nameInput.value.trim();
+  
+  if (!catName) return alert("Escribe un nombre para la categoría");
+
+  try {
+    await addDoc(collection(db, "categories"), { name: catName, createdAt: new Date() });
+    alert(`¡Categoría "${catName}" creada con éxito!`);
+    nameInput.value = "";
+    await loadCategories();
+    await loadStoreProducts();
+  } catch (err) {
+    alert("Error al guardar categoría: " + err.message);
+  }
 });
 
-// Guardar Producto en Firebase
+// Crear Producto
 formAddProduct.addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = document.getElementById('prod-name').value;
@@ -141,55 +173,70 @@ formAddProduct.addEventListener('submit', async (e) => {
   const image = document.getElementById('prod-images').value.trim();
   const variants = document.getElementById('prod-variants').value.split(',').map(s => s.trim());
 
-  if (!category) return alert("Por favor selecciona una categoría");
+  if (!category) return alert("Por favor selecciona una categoría primero");
 
-  await addDoc(collection(db, "products"), {
-    name, desc, price, category, image, variants, createdAt: new Date()
-  });
+  try {
+    await addDoc(collection(db, "products"), {
+      name, desc, price, category, image, variants, createdAt: new Date()
+    });
 
-  alert("Producto Guardado en Firebase!");
-  adminModal.classList.add('hidden');
-  formAddProduct.reset();
-  loadStoreProducts();
+    alert("¡Producto guardado exitosamente!");
+    adminModal.classList.add('hidden');
+    formAddProduct.reset();
+    loadStoreProducts();
+  } catch (err) {
+    alert("Error al guardar producto: " + err.message);
+  }
 });
 
-// Cargar Productos en Pantalla (Estilo Netflix)
+// Cargar Productos en la Tienda
 async function loadStoreProducts() {
   storeRows.innerHTML = "";
-  const catSnapshot = await getDocs(collection(db, "categories"));
-  const prodSnapshot = await getDocs(collection(db, "products"));
+  try {
+    const catSnapshot = await getDocs(collection(db, "categories"));
+    const prodSnapshot = await getDocs(collection(db, "products"));
 
-  const products = [];
-  prodSnapshot.forEach(docSnap => products.push(docSnap.data()));
+    const products = [];
+    prodSnapshot.forEach(docSnap => products.push(docSnap.data()));
 
-  catSnapshot.forEach(catSnap => {
-    const catName = catSnap.data().name;
-    const catProducts = products.filter(p => p.category === catName);
+    if (catSnapshot.empty) {
+      storeRows.innerHTML = `<p style="text-align:center; padding: 50px; opacity:0.6;">No hay categorías creadas aún. Usa el botón "Gestionar Tienda".</p>`;
+      return;
+    }
 
-    if (catProducts.length > 0) {
+    catSnapshot.forEach(catSnap => {
+      const catName = catSnap.data().name;
+      const catProducts = products.filter(p => p.category === catName);
+
       let rowHTML = `
         <div class="category-row">
           <h2>${catName}</h2>
           <div class="product-slider">
       `;
 
-      catProducts.forEach(p => {
-        rowHTML += `
-          <div class="product-card">
-            <img src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.name}">
-            <h3>${p.name}</h3>
-            <div class="price">$${p.price.toFixed(2)}</div>
-          </div>
-        `;
-      });
+      if (catProducts.length === 0) {
+        rowHTML += `<p style="opacity: 0.5; font-size: 0.9rem;">No hay productos en esta categoría aún.</p>`;
+      } else {
+        catProducts.forEach(p => {
+          rowHTML += `
+            <div class="product-card">
+              <img src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.name}">
+              <h3>${p.name}</h3>
+              <div class="price">$${p.price.toFixed(2)}</div>
+            </div>
+          `;
+        });
+      }
 
       rowHTML += `</div></div>`;
       storeRows.innerHTML += rowHTML;
-    }
-  });
+    });
+  } catch (err) {
+    console.error("Error al renderizar tienda:", err);
+  }
 }
 
-// Switch Tema
+// Tema Claro / Oscuro
 const btnTheme = document.getElementById('btn-theme');
 const siteLogo = document.getElementById('site-logo');
 btnTheme.addEventListener('click', () => {
