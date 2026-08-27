@@ -325,3 +325,31 @@ select {
 .btn-admin-footer:hover {
   opacity: 1;
 }
+/* --- ADAPTACIÓN RESPONSIVA PARA BÚSQUEDA --- */
+@media (max-width: 600px) {
+  .catalog-header {
+    flex-direction: column; /* Pasa de horizontal a vertical en celular */
+    gap: 8px;
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+
+  /* Agrupa los botones de Buscar y Filtros abajo ocupando el 50% cada uno */
+  .catalog-header > .btn-primary,
+  .catalog-header > .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Si quieres que los botones queden uno al lado del otro abajo: */
+  .catalog-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .search-bar {
+    grid-column: span 2; /* El buscador ocupa toda la primera fila */
+  }
+}
