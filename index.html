@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Casa del Policía</title>
-  <link rel="stylesheet" href="style.css">
+  <!-- El ?v=2 obliga al navegador a descargar el CSS nuevo sin usar la caché vieja -->
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
@@ -63,9 +64,10 @@
       <button id="btn-filters" class="btn-secondary">Filtros</button>
     </section>
 
-    <!-- SECCIONES DE PRODUCTOS -->
+    <!-- SECCIONES DE PRODUCTOS (CONTENEDORES PARA TU JS) -->
     <div id="catalog-sections">
-      <!-- Se genera dinámicamente con JS -->
+      <div id="searchResults" class="category-row hidden"></div>
+      <div id="categoriesContainer"></div>
     </div>
   </main>
 
@@ -90,8 +92,6 @@
         <label>Categoría:</label>
         <select id="filter-category">
           <option value="all">Todas las categorías</option>
-          <option value="Chalecos">Chalecos</option>
-          <option value="Linternas">Linternas</option>
         </select>
       </div>
       <div class="filter-group">
