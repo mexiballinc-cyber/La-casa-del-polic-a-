@@ -4,29 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Casa del Policía</title>
-  <!-- El ?v=2 obliga al navegador a descargar el CSS nuevo sin usar la caché vieja -->
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <!-- NAVBAR SUPERIOR -->
   <header class="navbar">
     <div class="nav-left">
-      <img id="site-logo" src="logo.png" alt="Logo" class="logo">
+      <img id="site-logo" src="https://i.imgur.com/9W9C2TC.png" alt="Logo" class="logo">
       <span class="brand-name">La Casa del Policía</span>
     </div>
 
     <div class="nav-actions">
       <!-- Favoritos -->
-      <button id="btn-favs" class="icon-btn" title="Favoritos">
+      <button id="btn-wishlist-modal" class="icon-btn" title="Favoritos">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
         </svg>
-        <span id="fav-count" class="badge">0</span>
+        <span id="wishlist-count" class="badge">0</span>
       </button>
 
       <!-- Carrito -->
-      <button id="btn-cart" class="icon-btn" title="Carrito">
+      <button id="btn-cart-modal" class="icon-btn" title="Carrito">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="9" cy="21" r="1"></circle>
           <circle cx="20" cy="21" r="1"></circle>
@@ -45,48 +44,89 @@
       </button>
 
       <!-- Mi Perfil / Cuenta -->
-      <button id="btn-account" class="btn-primary">Mi Perfil</button>
+      <button id="btn-auth-modal" class="btn-primary">
+        <span id="auth-btn-label">Cuenta</span>
+      </button>
     </div>
   </header>
 
-  <!-- CONTENEDOR PRINCIPAL -->
-  <main class="main-container">
+  <!-- CONTENEDOR PRINCIPAL DE TIENDA -->
+  <main class="main-container" id="catalog-view">
     
-    <!-- BARRA DE BÚSQUEDA Y FILTROS ENCABEZANDO EL CATÁLOGO -->
+    <!-- BARRA DE BÚSQUEDA Y FILTROS -->
     <section class="catalog-header">
       <div class="search-bar">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" id="input-search" placeholder="Buscar productos...">
+        <input type="text" id="search-input" placeholder="Buscar productos...">
       </div>
-      <button id="btn-filters" class="btn-secondary">Filtros</button>
+      <button id="btn-execute-search" class="btn-primary">Buscar</button>
+      <button id="btn-toggle-filters" class="btn-secondary">Filtros</button>
     </section>
 
-    <!-- SECCIONES DE PRODUCTOS (CONTENEDORES PARA TU JS) -->
-    <div id="catalog-sections">
-      <div id="searchResults" class="category-row hidden"></div>
-      <div id="categoriesContainer"></div>
+    <!-- SECCIÓN RECOMENDADOS -->
+    <div id="recommended-row" class="category-row hidden">
+      <h2>Recomendados para ti</h2>
+      <div id="recommended-slider" class="product-slider"></div>
     </div>
+
+    <!-- CONTENEDOR DE CATEGORÍAS FIRESTORE -->
+    <div id="store-rows"></div>
   </main>
 
-  <!-- FOOTER (BOTÓN DE ADMIN ABAJO) -->
-  <footer class="site-footer">
-    <p>© 2026 La Casa del Policía</p>
-    <button id="btn-admin" class="btn-admin-footer">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 20h9"></path>
-        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-      </svg>
-      <span>Modo Admin</span>
-    </button>
-  </footer>
+  <!-- VISTA: RESULTADOS DE BÚSQUEDA -->
+  <main class="main-container hidden" id="search-results-view">
+    <button id="btn-back-from-search" class="btn-secondary" style="margin-bottom: 15px;">← Volver al catálogo</button>
+    <h2 id="search-results-title">Resultados de búsqueda</h2>
+    <div id="search-products-grid" class="product-slider" style="flex-wrap: wrap; gap: 15px;"></div>
+  </main>
 
-  <!-- MODAL FILTROS -->
-  <div id="modal-filters" class="modal hidden">
+  <!-- VISTA: DETALLE DE PRODUCTO -->
+  <main class="main-container hidden" id="product-detail-view">
+    <button id="btn-back-to-catalog" class="btn-secondary" style="margin-bottom: 15px;">← Volver al catálogo</button>
+    
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+      <img id="detail-img" src="" alt="Producto" style="width: 100%; max-width: 320px; height: 260px; object-fit: cover; border-radius: 12px;">
+      
+      <div style="flex: 1; min-width: 250px;">
+        <span id="detail-category" style="opacity: 0.6; font-size: 0.85rem; text-transform: uppercase;"></span>
+        <h1 id="detail-title" style="margin: 5px 0;"></h1>
+        <h2 id="detail-price" style="color: var(--primary); margin-bottom: 15px;"></h2>
+        <p id="detail-desc" style="margin-bottom: 20px; line-height: 1.5;"></p>
+
+        <div id="detail-variants-container" class="hidden" style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 0.85rem; margin-bottom: 8px;">Opciones disponibles:</label>
+          <div id="detail-variants"></div>
+        </div>
+
+        <div id="detail-actions-container" style="display: flex; gap: 10px; align-items: center;"></div>
+      </div>
+    </div>
+
+    <hr style="margin: 30px 0; border: none; border-top: 1px solid var(--border-color);">
+
+    <!-- SECCIÓN OPINIONES -->
+    <h3>Opiniones y Reseñas</h3>
+    <form id="form-add-review" style="margin: 15px 0; display: flex; flex-direction: column; gap: 10px; max-width: 450px;">
+      <select id="review-rating" required>
+        <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+        <option value="4">⭐⭐⭐⭐ (4/5)</option>
+        <option value="3">⭐⭐⭐ (3/5)</option>
+        <option value="2">⭐⭐ (2/5)</option>
+        <option value="1">⭐ (1/5)</option>
+      </select>
+      <textarea id="review-comment" placeholder="Escribe tu opinión aquí..." required style="padding: 10px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 8px; font-family: inherit;"></textarea>
+      <button type="submit" class="btn-primary">Publicar Opinión</button>
+    </form>
+    <div id="reviews-list"></div>
+  </main>
+
+  <!-- MODAL: FILTROS -->
+  <div id="filter-modal" class="modal hidden">
     <div class="modal-content">
-      <span class="close-btn" id="close-filters">&times;</span>
+      <span class="close-btn" id="close-filter">&times;</span>
       <h3>Filtrar Productos</h3>
       <div class="filter-group">
         <label>Categoría:</label>
@@ -98,14 +138,116 @@
         <label>Ordenar por precio:</label>
         <select id="filter-price">
           <option value="default">Por defecto</option>
-          <option value="low">Menor a Mayor</option>
-          <option value="high">Mayor a Menor</option>
+          <option value="asc">Menor a Mayor</option>
+          <option value="desc">Mayor a Menor</option>
         </select>
       </div>
-      <button id="apply-filters" class="btn-primary full-width">Aplicar Filtros</button>
+      <button id="btn-apply-filters" class="btn-primary full-width">Aplicar Filtros</button>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <!-- MODAL: AUTENTICACIÓN / MI PERFIL -->
+  <div id="auth-modal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-btn" id="close-auth">&times;</span>
+      
+      <div id="auth-logged-out-view">
+        <h3 id="auth-title">Iniciar Sesión</h3>
+        <form id="auth-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+          <input type="email" id="auth-email" placeholder="Correo electrónico" required style="padding: 10px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 8px;">
+          <input type="password" id="auth-password" placeholder="Contraseña" required style="padding: 10px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 8px;">
+          <button type="submit" class="btn-primary full-width">Ingresar</button>
+        </form>
+        <p style="margin-top: 15px; font-size: 0.85rem; text-align: center;">
+          ¿No tienes cuenta? <a href="#" id="auth-toggle-link" style="color: var(--primary);">Regístrate</a>
+        </p>
+      </div>
+
+      <div id="auth-logged-in-view" class="hidden" style="text-align: center;">
+        <div id="profile-initial" style="width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 10px auto; font-weight: bold;"></div>
+        <h3 id="user-display-email"></h3>
+        <p id="user-display-role" style="opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px;"></p>
+        <button id="btn-logout" class="btn-secondary full-width">Cerrar Sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CARRITO -->
+  <div id="cart-modal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-btn" id="close-cart">&times;</span>
+      <h3>Tu Carrito</h3>
+      <div id="cart-items-list" style="max-height: 250px; overflow-y: auto; margin: 15px 0;"></div>
+      <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px;">
+        <span>Total:</span>
+        <span>$<span id="cart-total-price">0.00</span></span>
+      </div>
+      <button id="btn-checkout" class="btn-primary full-width">Finalizar Compra</button>
+    </div>
+  </div>
+
+  <!-- MODAL: FAVORITOS -->
+  <div id="wishlist-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 500px;">
+      <span class="close-btn" id="close-wishlist">&times;</span>
+      <h3>Mis Favoritos</h3>
+      <div id="wishlist-items-list" class="product-slider" style="flex-wrap: wrap; gap: 10px; margin-top: 15px;"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADMIN PANEL -->
+  <div id="admin-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 550px;">
+      <span class="close-btn" id="close-admin">&times;</span>
+      <h3>Panel Administrador</h3>
+      
+      <div style="display: flex; gap: 10px; margin: 15px 0;">
+        <button id="tab-btn-inventory" class="btn-secondary active">Inventario</button>
+        <button id="tab-btn-product" class="btn-secondary">Agregar Producto</button>
+        <button id="tab-btn-category" class="btn-secondary">Categorías</button>
+      </div>
+
+      <div id="tab-content-inventory">
+        <h4>Productos</h4>
+        <div id="admin-product-list" style="max-height: 150px; overflow-y: auto; margin-bottom: 15px;"></div>
+        <h4>Categorías</h4>
+        <div id="admin-category-list" style="max-height: 120px; overflow-y: auto;"></div>
+      </div>
+
+      <form id="form-add-product" class="hidden" style="display: flex; flex-direction: column; gap: 8px;">
+        <h4 id="form-product-title">Crear Producto</h4>
+        <input type="hidden" id="prod-id-edit">
+        <input type="text" id="prod-name" placeholder="Nombre" required style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
+        <textarea id="prod-desc" placeholder="Descripción" style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;"></textarea>
+        <input type="number" step="0.01" id="prod-price" placeholder="Precio ($)" required style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
+        <select id="prod-category" required></select>
+        <input type="text" id="prod-images" placeholder="URL Imagen principal" style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
+        <input type="text" id="prod-variants" placeholder="Variantes separadas por coma (ej: M, L, XL)" style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
+        <button type="submit" id="btn-save-product" class="btn-primary">Guardar Producto</button>
+        <button type="button" id="btn-cancel-edit-prod" class="btn-secondary hidden">Cancelar</button>
+      </form>
+
+      <form id="form-add-category" class="hidden" style="display: flex; flex-direction: column; gap: 8px;">
+        <h4>Crear Categoría</h4>
+        <input type="text" id="cat-name" placeholder="Nombre de categoría" required style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
+        <button type="submit" class="btn-primary">Guardar Categoría</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>© 2026 La Casa del Policía</p>
+    <button id="admin-pencil-btn" class="btn-admin-footer hidden">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+      </svg>
+      <span>Modo Admin</span>
+    </button>
+  </footer>
+
+  <!-- TIPO MÓDULO PARA FIREBASE JS COMPATIBLE -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>
