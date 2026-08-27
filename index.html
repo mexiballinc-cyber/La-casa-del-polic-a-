@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Casa del Policía</title>
+  <!-- FAVICON E ICONO APP -->
+  <link rel="icon" type="image/png" href="https://i.imgur.com/2OS6hT6.png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/2OS6hT6.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -83,12 +86,17 @@
     <div id="search-products-grid" class="product-slider" style="flex-wrap: wrap; gap: 15px;"></div>
   </main>
 
-  <!-- VISTA: DETALLE DE PRODUCTO -->
+  <!-- VISTA: DETALLE DE PRODUCTO Y GALERÍA -->
   <main class="main-container hidden" id="product-detail-view">
     <button id="btn-back-to-catalog" class="btn-secondary" style="margin-bottom: 15px;">← Volver al catálogo</button>
     
     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-      <img id="detail-img" src="" alt="Producto" style="width: 100%; max-width: 320px; height: 260px; object-fit: cover; border-radius: 12px;">
+      
+      <!-- CONTENEDOR DE GALERÍA -->
+      <div style="width: 100%; max-width: 320px;">
+        <img id="detail-img" src="" alt="Producto" style="width: 100%; height: 260px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color);">
+        <div id="detail-gallery-thumbs" class="gallery-thumbs"></div>
+      </div>
       
       <div style="flex: 1; min-width: 250px;">
         <span id="detail-category" style="opacity: 0.6; font-size: 0.85rem; text-transform: uppercase;"></span>
@@ -152,7 +160,8 @@
       <span class="close-btn" id="close-auth">&times;</span>
       
       <div id="auth-logged-out-view">
-        <h3 id="auth-title">Iniciar Sesión</h3>
+        <h3 id="auth-title">Iniciar Sesión Obligatorio</h3>
+        <p id="auth-submessage" style="font-size:0.85rem; opacity:0.8; margin-top:5px;">Debes ingresar para ver el catálogo de la tienda.</p>
         <form id="auth-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
           <input type="email" id="auth-email" placeholder="Correo electrónico" required style="padding: 10px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 8px;">
           <input type="password" id="auth-password" placeholder="Contraseña" required style="padding: 10px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 8px;">
@@ -221,7 +230,7 @@
         <textarea id="prod-desc" placeholder="Descripción" style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;"></textarea>
         <input type="number" step="0.01" id="prod-price" placeholder="Precio ($)" required style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
         <select id="prod-category" required></select>
-        <input type="text" id="prod-images" placeholder="URL Imagen principal" style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
+        <input type="text" id="prod-images" placeholder="URL Imágenes (separadas por coma)" style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
         <input type="text" id="prod-variants" placeholder="Variantes separadas por coma (ej: M, L, XL)" style="padding: 8px; background: var(--secondary-bg); border: 1px solid var(--border-color); color: inherit; border-radius: 6px;">
         <button type="submit" id="btn-save-product" class="btn-primary">Guardar Producto</button>
         <button type="button" id="btn-cancel-edit-prod" class="btn-secondary hidden">Cancelar</button>
@@ -247,7 +256,6 @@
     </button>
   </footer>
 
-  <!-- TIPO MÓDULO PARA FIREBASE JS COMPATIBLE -->
   <script type="module" src="app.js"></script>
 </body>
 </html>
