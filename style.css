@@ -67,7 +67,6 @@ body {
   font-weight: bold;
 }
 
-/* OCULTAR TEXTO DEL LOGO EN CELULARES */
 @media (max-width: 600px) {
   .brand-name {
     display: none !important;
@@ -184,7 +183,7 @@ body {
   font-size: 0.95rem;
 }
 
-/* --- CATEGORÍAS Y PRODUCTOS (SLIDER HORIZONTAL RESPONSIVO) --- */
+/* --- CATEGORÍAS Y PRODUCTOS --- */
 .category-row {
   margin-bottom: 30px;
 }
@@ -205,7 +204,6 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Estilo para la barra de desplazamiento */
 .product-slider::-webkit-scrollbar {
   height: 4px;
 }
@@ -220,13 +218,10 @@ body {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 10px;
-  
-  /* Dimensiones fijas para control visual óptimo en celular */
   width: 155px !important;
   min-width: 155px !important;
   max-width: 155px !important;
   flex-shrink: 0;
-  
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -260,6 +255,31 @@ body {
   color: var(--primary);
   font-weight: bold;
   font-size: 0.95rem;
+}
+
+/* --- GALERÍA DE IMÁGENES --- */
+.gallery-thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.gallery-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.gallery-thumb:hover, .gallery-thumb.active {
+  opacity: 1;
+  border-color: var(--primary);
 }
 
 /* --- MODALES --- */
@@ -351,7 +371,6 @@ select {
   opacity: 1;
 }
 
-/* --- ADAPTACIÓN RESPONSIVA PARA BÚSQUEDA Y PANTALLAS --- */
 @media (max-width: 600px) {
   .catalog-header {
     display: grid;
