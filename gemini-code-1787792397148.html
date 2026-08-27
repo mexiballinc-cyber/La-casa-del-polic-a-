@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Casa del Policía</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Encabezado / Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img id="site-logo" src="https://i.imgur.com/9W9C2TC.png" alt="Logo" class="logo">
+      <h1 class="brand-name">La Casa del Policía</h1>
+    </div>
+
+    <div class="nav-search">
+      <input type="text" id="search-input" placeholder="Buscar productos...">
+      <button id="btn-execute-search" class="btn-icon">🔍</button>
+      <button id="btn-toggle-filters" class="btn-secondary">Filtros</button>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Botón Favoritos -->
+      <button id="btn-wishlist-modal" class="icon-btn" title="Lista de Deseos">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <span id="wishlist-count" class="badge">0</span>
+      </button>
+
+      <!-- Botón Carrito -->
+      <button id="btn-cart-modal" class="icon-btn" title="Carrito de Compras">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span id="cart-count" class="badge">0</span>
+      </button>
+
+      <button id="btn-theme" class="btn-secondary">🎨 Tema</button>
+      <button id="admin-pencil-btn" class="btn-secondary hidden">✏️ Admin</button>
+      
+      <button id="btn-auth-modal" class="btn-primary">
+        <span id="auth-btn-label">Cuenta</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- VISTA 1: Catálogo Principal (Home) -->
+    <section id="catalog-view" class="view-section">
+      <!-- Sección Recomendados (Historial) -->
+      <div id="recommended-row" class="category-row hidden">
+        <h2>Basado en tus búsquedas</h2>
+        <div id="recommended-slider" class="product-slider"></div>
+      </div>
+
+      <!-- Filas de Productos por Categoría -->
+      <div id="store-rows"></div>
+    </section>
+
+    <!-- VISTA 2: Resultados de Búsqueda (Pantalla Completa) -->
+    <section id="search-results-view" class="view-section hidden">
+      <div class="view-header" style="margin-bottom: 20px;">
+        <button id="btn-back-from-search" class="btn-secondary">← Volver al Catálogo</button>
+        <h2 id="search-results-title" style="margin-top: 15px;">Resultados de búsqueda</h2>
+      </div>
+      <div id="search-products-grid" class="product-slider" style="flex-wrap: wrap;"></div>
+    </section>
+
+    <!-- VISTA 3: Detalle de Producto a Pantalla Completa -->
+    <section id="product-detail-view" class="view-section hidden">
+      <button id="btn-back-to-catalog" class="btn-secondary">← Volver al Catálogo</button>
+      
+      <div class="product-detail-layout" style="display: flex; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+        <div class="detail-media" style="flex: 1; min-width: 280px;">
+          <img id="detail-img" src="" alt="Producto" style="width: 100%; border-radius: 12px; max-height: 400px; object-fit: cover;">
+        </div>
+
+        <div class="detail-info" style="flex: 1; min-width: 280px;">
+          <span id="detail-category" class="badge-cat" style="opacity: 0.7; text-transform: uppercase; font-size: 0.8rem;">Categoría</span>
+          <h1 id="detail-title" style="margin: 10px 0;">Nombre del Producto</h1>
+          <h2 id="detail-price" style="color: #4CAF50; margin-bottom: 15px;">$0.00</h2>
+          <p id="detail-desc" style="line-height: 1.5; margin-bottom: 20px;">Descripción del producto...</p>
+
+          <div id="detail-variants-container" class="hidden" style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: bold;">Opciones disponibles:</label>
+            <div id="detail-variants" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+          </div>
+
+          <div id="detail-actions-container" style="display: flex; gap: 15px; align-items: center; margin-bottom: 30px;">
+            <!-- Generado dinámicamente en app.js -->
+          </div>
+        </div>
+      </div>
+
+      <hr style="border-color: rgba(255,255,255,0.1); margin: 40px 0;">
+
+      <!-- Reseñas -->
+      <div class="reviews-section">
+        <h2>Opiniones de los Clientes</h2>
+        <div id="reviews-list" class="reviews-list" style="margin: 20px 0;"></div>
+
+        <form id="form-add-review" style="margin-top: 20px;">
+          <h3>Escribe una opinión</h3>
+          <div style="display: flex; gap: 10px; margin: 10px 0; align-items: center;">
+            <select id="review-rating" class="glass-input" style="padding: 8px;">
+              <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+              <option value="4">⭐⭐⭐⭐ (4)</option>
+              <option value="3">⭐⭐⭐ (3)</option>
+              <option value="2">⭐⭐ (2)</option>
+              <option value="1">⭐ (1)</option>
+            </select>
+            <input type="text" id="review-comment" placeholder="Tu opinión sobre este producto..." required style="flex: 1; padding: 8px;">
+          </div>
+          <button type="submit" class="btn-primary">Publicar Opinión</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: Autenticación -->
+  <div id="auth-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="close-auth" class="close-btn">&times;</span>
+      
+      <div id="auth-logged-out-view">
+        <h2 id="auth-title">Iniciar Sesión</h2>
+        <form id="auth-form">
+          <input type="email" id="auth-email" placeholder="Correo electrónico" required style="width: 100%; margin: 10px 0; padding: 10px;">
+          <input type="password" id="auth-password" placeholder="Contraseña" required style="width: 100%; margin: 10px 0; padding: 10px;">
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Enviar</button>
+        </form>
+        <p style="margin-top: 15px; text-align: center;">
+          <span id="auth-toggle-link" style="color: #4CAF50; cursor: pointer; text-decoration: underline;">Regístrate</span>
+        </p>
+      </div>
+
+      <div id="auth-logged-in-view" class="hidden" style="text-align: center;">
+        <div id="profile-initial" style="width: 60px; height: 60px; border-radius: 50%; background: #4CAF50; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 10px auto;">U</div>
+        <h3 id="user-display-email">usuario@correo.com</h3>
+        <p id="user-display-role" style="opacity: 0.7; margin-bottom: 20px;">Cliente</p>
+        <button id="btn-logout" class="btn-secondary" style="width: 100%;">Cerrar Sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Filtros -->
+  <div id="filter-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="close-filter" class="close-btn">&times;</span>
+      <h2>Filtrar Productos</h2>
+      <div style="margin: 15px 0;">
+        <label>Categoría:</label>
+        <select id="filter-category" style="width: 100%; padding: 8px; margin-top: 5px;"></select>
+      </div>
+      <div style="margin: 15px 0;">
+        <label>Ordenar por precio:</label>
+        <select id="filter-price" style="width: 100%; padding: 8px; margin-top: 5px;">
+          <option value="default">Por defecto</option>
+          <option value="asc">Menor a Mayor</option>
+          <option value="desc">Mayor a Menor</option>
+        </select>
+      </div>
+      <button id="btn-apply-filters" class="btn-primary" style="width: 100%;">Aplicar Filtros</button>
+    </div>
+  </div>
+
+  <!-- MODAL: Carrito de Compras -->
+  <div id="cart-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="close-cart" class="close-btn">&times;</span>
+      <h2>Tu Carrito de Compras</h2>
+      <div id="cart-items-list" style="margin: 20px 0; max-height: 300px; overflow-y: auto;"></div>
+      <div class="cart-summary" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+        <h3>Total: $<span id="cart-total-price">0.00</span></h3>
+        <button id="btn-checkout" class="btn-primary" style="width: 100%; margin-top: 15px;">Proceder al Pago / Comprar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Lista de Deseos (Favoritos) -->
+  <div id="wishlist-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="close-wishlist" class="close-btn">&times;</span>
+      <h2>Tus Favoritos ❤️</h2>
+      <div id="wishlist-items-list" class="product-slider" style="flex-wrap: wrap; margin-top: 20px;"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: Administración -->
+  <div id="admin-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 600px;">
+      <span id="close-admin" class="close-btn">&times;</span>
+      <h2>Panel de Administración</h2>
+      
+      <div class="admin-tabs" style="display: flex; gap: 10px; margin: 15px 0;">
+        <button id="tab-btn-inventory" class="btn-secondary active">Inventario</button>
+        <button id="tab-btn-product" class="btn-secondary">Nuevo Producto</button>
+        <button id="tab-btn-category" class="btn-secondary">Nueva Categoría</button>
+      </div>
+
+      <div id="tab-content-inventory">
+        <h3>Productos</h3>
+        <div id="admin-product-list" style="max-height: 150px; overflow-y: auto; margin-bottom: 15px;"></div>
+        <h3>Categorías</h3>
+        <div id="admin-category-list" style="max-height: 100px; overflow-y: auto;"></div>
+      </div>
+
+      <form id="form-add-product" class="hidden">
+        <h3 id="form-product-title">Crear Producto</h3>
+        <input type="hidden" id="prod-id-edit">
+        <input type="text" id="prod-name" placeholder="Nombre" required style="width: 100%; margin: 5px 0; padding: 8px;">
+        <textarea id="prod-desc" placeholder="Descripción" style="width: 100%; margin: 5px 0; padding: 8px;"></textarea>
+        <input type="number" step="0.01" id="prod-price" placeholder="Precio" required style="width: 100%; margin: 5px 0; padding: 8px;">
+        <select id="prod-category" required style="width: 100%; margin: 5px 0; padding: 8px;"></select>
+        <input type="text" id="prod-images" placeholder="URL de Imagen" style="width: 100%; margin: 5px 0; padding: 8px;">
+        <input type="text" id="prod-variants" placeholder="Variantes (ej. Rojo, Azul, XL)" style="width: 100%; margin: 5px 0; padding: 8px;">
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button type="submit" id="btn-save-product" class="btn-primary" style="flex: 1;">Guardar Producto</button>
+          <button type="button" id="btn-cancel-edit-prod" class="btn-secondary hidden">Cancelar</button>
+        </div>
+      </form>
+
+      <form id="form-add-category" class="hidden">
+        <h3>Crear Categoría</h3>
+        <input type="text" id="cat-name" placeholder="Nombre de categoría" required style="width: 100%; margin: 10px 0; padding: 8px;">
+        <button type="submit" class="btn-primary" style="width: 100%;">Guardar Categoría</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPT CON TYPE="MODULE" (SIN ?v=) -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
