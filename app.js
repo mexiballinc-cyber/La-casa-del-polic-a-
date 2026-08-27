@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDUGuBk9a13OkPCtQIgrN09vi19S52t67I",
@@ -20,7 +20,7 @@ let allProducts = [];
 let allCategories = [];
 let activeProductId = null;
 
-// Elementos DOM
+// DOM
 const authModal = document.getElementById('auth-modal');
 const btnAuthModal = document.getElementById('btn-auth-modal');
 const closeAuth = document.getElementById('close-auth');
@@ -56,30 +56,44 @@ const btnCancelEditProd = document.getElementById('btn-cancel-edit-prod');
 
 // Filtros y Búsqueda
 const searchInput = document.getElementById('search-input');
+const btnExecuteSearch = document.getElementById('btn-execute-search');
 const btnToggleFilters = document.getElementById('btn-toggle-filters');
-const filterDropdown = document.getElementById('filter-dropdown');
+const filterModal = document.getElementById('filter-modal');
+const closeFilter = document.getElementById('close-filter');
 const filterCategory = document.getElementById('filter-category');
 const filterPrice = document.getElementById('filter-price');
+const btnApplyFilters = document.getElementById('btn-apply-filters');
 
-// Modal Producto Detalle
-const productModal = document.getElementById('product-modal');
-const closeProduct = document.getElementById('close-product');
+// Vistas
+const catalogView = document.getElementById('catalog-view');
+const productDetailView = document.getElementById('product-detail-view');
+const btnBackToCatalog = document.getElementById('btn-back-to-catalog');
 const formAddReview = document.getElementById('form-add-review');
 const reviewsList = document.getElementById('reviews-list');
 
 let isLoginMode = true;
 
-// Abrir/Cerrar Modales
+// Modales
 btnAuthModal.addEventListener('click', () => authModal.classList.remove('hidden'));
 closeAuth.addEventListener('click', () => authModal.classList.add('hidden'));
 pencilBtn.addEventListener('click', () => { adminModal.classList.remove('hidden'); loadAdminInventory(); });
 closeAdmin.addEventListener('click', () => adminModal.classList.add('hidden'));
-closeProduct.addEventListener('click', () => productModal.classList.add('hidden'));
 
-// Desplegar Filtros
-btnToggleFilters.addEventListener('click', () => filterDropdown.classList.toggle('hidden'));
+// Modal Filtros
+btnToggleFilters.addEventListener('click', () => filterModal.classList.remove('hidden'));
+closeFilter.addEventListener('click', () => filterModal.classList.add('hidden'));
+btnApplyFilters.addEventListener('click', () => {
+  filterModal.classList.add('hidden');
+  renderFilteredStore();
+});
 
-// Control Pestañas Admin
+// Navegación Vistas
+btnBackToCatalog.addEventListener('click', () => {
+  productDetailView.classList.add('hidden');
+  catalogView.classList.remove('hidden');
+});
+
+// Tabs Admin
 function switchTab(activeBtn, activeContent) {
   [tabBtnInventory, tabBtnProduct, tabBtnCategory].forEach(b => b.classList.remove('active'));
   [tabContentInventory, formAddProduct, formAddCategory].forEach(c => c.classList.add('hidden'));
@@ -90,7 +104,7 @@ tabBtnInventory.addEventListener('click', () => { switchTab(tabBtnInventory, tab
 tabBtnProduct.addEventListener('click', () => { resetProductForm(); switchTab(tabBtnProduct, formAddProduct); });
 tabBtnCategory.addEventListener('click', () => switchTab(tabBtnCategory, formAddCategory));
 
-// Auth & Estado
+// Auth
 authToggleLink.addEventListener('click', () => {
   isLoginMode = !isLoginMode;
   authTitle.textContent = isLoginMode ? "Iniciar Sesión" : "Crear Cuenta";
@@ -143,7 +157,7 @@ onAuthStateChanged(auth, async (user) => {
   loadStoreData();
 });
 
-// Cargar Datos Iniciales de la Tienda
+// Cargar Datos
 async function loadStoreData() {
   try {
     const catSnap = await getDocs(collection(db, "categories"));
@@ -167,7 +181,26 @@ async function loadStoreData() {
   } catch (err) { console.error("Error al cargar tienda:", err); }
 }
 
-// Fila Dinámica: "Puede Gustarte" (Basado en historial de búsquedas)
+// Búsqueda & Guarda Historial (LocalStorage/Cookies)
+function executeSearch() {
+  const term = searchInput.value.trim().toLowerCase();
+  if (term.length > 0) {
+    let history = JSON.parse(localStorage.getItem('searchHistory') || "[]");
+    if (!history.includes(term)) {
+      history.push(term);
+      if (history.length > 5) history.shift();
+      localStorage.setItem('searchHistory', JSON.stringify(history));
+    }
+    renderRecommendedRow();
+  }
+  renderFilteredStore();
+}
+
+btnExecuteSearch.addEventListener('click', executeSearch);
+searchInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') executeSearch();
+});
+
 function renderRecommendedRow() {
   const recRow = document.getElementById('recommended-row');
   const recSlider = document.getElementById('recommended-slider');
@@ -178,7 +211,6 @@ function renderRecommendedRow() {
     return;
   }
 
-  // Filtrar productos que coincidan con términos buscados previamente
   const recommended = allProducts.filter(p => {
     return searchHistory.some(term => 
       p.name.toLowerCase().includes(term) || 
@@ -196,54 +228,32 @@ function renderRecommendedRow() {
   attachCardEvents();
 }
 
-// Búsqueda y Filtros
-searchInput.addEventListener('input', (e) => {
-  const term = e.target.value.trim().toLowerCase();
-  if (term.length > 2) {
-    let history = JSON.parse(localStorage.getItem('searchHistory') || "[]");
-    if (!history.includes(term)) {
-      history.push(term);
-      if (history.length > 5) history.shift(); // Mantener últimas 5 búsquedas
-      localStorage.setItem('searchHistory', JSON.stringify(history));
-    }
-    renderRecommendedRow();
-  }
-  renderFilteredStore();
-});
-
-filterCategory.addEventListener('change', renderFilteredStore);
-filterPrice.addEventListener('change', renderFilteredStore);
-
 function renderFilteredStore() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   const catFilter = filterCategory.value;
   const priceFilter = filterPrice.value;
 
-  // Filtrar productos por término y categoría
   let filtered = allProducts.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchTerm) || (p.desc && p.desc.toLowerCase().includes(searchTerm));
+    const matchesSearch = !searchTerm || p.name.toLowerCase().includes(searchTerm) || (p.desc && p.desc.toLowerCase().includes(searchTerm));
     const matchesCategory = (catFilter === 'all') || (p.category === catFilter);
     return matchesSearch && matchesCategory;
   });
 
-  // Ordenar por precio
   if (priceFilter === 'asc') filtered.sort((a, b) => a.price - b.price);
   if (priceFilter === 'desc') filtered.sort((a, b) => b.price - a.price);
 
   storeRows.innerHTML = "";
 
-  // Si hay búsqueda activa o filtro de orden, mostrar como grilla de resultados
   if (searchTerm || catFilter !== 'all' || priceFilter !== 'default') {
     if (filtered.length === 0) {
       storeRows.innerHTML = `<p style="text-align:center; padding: 40px; opacity: 0.6;">No se encontraron productos.</p>`;
       return;
     }
-    let html = `<div class="category-row"><h2>Resultados (${filtered.length})</h2><div class="product-slider" style="flex-wrap: wrap;">`;
+    let html = `<div class="category-row"><h2>Resultados de Búsqueda (${filtered.length})</h2><div class="product-slider" style="flex-wrap: wrap;">`;
     filtered.forEach(p => { html += createProductCardHTML(p); });
     html += `</div></div>`;
     storeRows.innerHTML = html;
   } else {
-    // Modo Vista Normal agrupado por categorías
     allCategories.forEach(catName => {
       const catProducts = allProducts.filter(p => p.category === catName);
       let rowHTML = `<div class="category-row"><h2>${catName}</h2><div class="product-slider">`;
@@ -272,17 +282,17 @@ function createProductCardHTML(p) {
   `;
 }
 
-// Abrir Modal de Detalles de Producto
+// Abrir Pantalla Completa de Producto
 function attachCardEvents() {
   document.querySelectorAll('.product-card').forEach(card => {
     card.addEventListener('click', () => {
       const id = card.getAttribute('data-id');
-      openProductDetails(id);
+      openProductPage(id);
     });
   });
 }
 
-async function openProductDetails(id) {
+async function openProductPage(id) {
   const product = allProducts.find(p => p.id === id);
   if (!product) return;
   activeProductId = id;
@@ -293,7 +303,6 @@ async function openProductDetails(id) {
   document.getElementById('detail-desc').textContent = product.desc || "Sin descripción disponible.";
   document.getElementById('detail-img').src = product.image || 'https://via.placeholder.com/200x140?text=Sin+Imagen';
 
-  // Renderizar Variantes
   const variantsContainer = document.getElementById('detail-variants');
   variantsContainer.innerHTML = "";
   if (product.variants && product.variants.length > 0 && product.variants[0] !== "") {
@@ -306,16 +315,19 @@ async function openProductDetails(id) {
   }
 
   loadReviews(id);
-  productModal.classList.remove('hidden');
+
+  catalogView.classList.add('hidden');
+  productDetailView.classList.remove('hidden');
+  window.scrollTo(0, 0);
 }
 
-// Opiniones / Reseñas (Firestore Sub-colección)
+// Reseñas
 async function loadReviews(productId) {
   reviewsList.innerHTML = "Cargando opiniones...";
   try {
     const revSnap = await getDocs(collection(db, "products", productId, "reviews"));
     if (revSnap.empty) {
-      reviewsList.innerHTML = `<p style="opacity: 0.5; font-size: 0.85rem;">Aún no hay opiniones sobre este producto.</p>`;
+      reviewsList.innerHTML = `<p style="opacity: 0.5; font-size: 0.9rem;">Aún no hay opiniones sobre este producto.</p>`;
       return;
     }
     reviewsList.innerHTML = "";
@@ -328,7 +340,7 @@ async function loadReviews(productId) {
             <strong>${r.userEmail || 'Anónimo'}</strong>
             <span>${stars}</span>
           </div>
-          <p style="font-size: 0.85rem; margin-top: 4px;">${r.comment}</p>
+          <p style="font-size: 0.9rem; margin-top: 6px;">${r.comment}</p>
         </div>
       `;
     });
@@ -354,7 +366,7 @@ formAddReview.addEventListener('submit', async (e) => {
   } catch (err) { alert("Error: " + err.message); }
 });
 
-// Panel Admin (Inventario)
+// Admin Panel
 async function loadAdminInventory() {
   adminProductList.innerHTML = "Cargando productos...";
   adminCategoryList.innerHTML = "Cargando categorías...";
@@ -480,10 +492,8 @@ formAddCategory.addEventListener('submit', async (e) => {
   } catch (err) { alert("Error: " + err.message); }
 });
 
-// Cambiar Tema
+// Tema
 const btnTheme = document.getElementById('btn-theme');
 const siteLogo = document.getElementById('site-logo');
 btnTheme.addEventListener('click', () => {
-  document.body.classList.toggle('light-theme');
-  const isLight = document.body.classList.contains('light-theme');
-  siteLogo.src = isLight ? "https
+  document.body.class
