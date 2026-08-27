@@ -20,7 +20,7 @@ let allProducts = [];
 let allCategories = [];
 let activeProductId = null;
 
-// Carrito y Favoritos (Persistencia Local)
+// Carrito y Favoritos
 let cart = JSON.parse(localStorage.getItem('cart') || "[]");
 let wishlist = JSON.parse(localStorage.getItem('wishlist') || "[]");
 let selectedVariant = null;
@@ -97,7 +97,10 @@ let isLoginMode = true;
 
 // --- MODALES & TABS ---
 btnAuthModal.addEventListener('click', () => authModal.classList.remove('hidden'));
-closeAuth.addEventListener('click', () => authModal.classList.add('hidden'));
+closeAuth.addEventListener('click', () => {
+  if (!auth.currentUser) return; // Si no hay usuario, obliga a iniciar sesión
+  authModal.classList.add('hidden');
+});
 pencilBtn.addEventListener('click', () => { adminModal.classList.remove('hidden'); loadAdminInventory(); });
 closeAdmin.addEventListener('click', () => adminModal.classList.add('hidden'));
 
@@ -147,10 +150,15 @@ authForm.addEventListener('submit', async (e) => {
   } catch (error) { alert("Error: " + error.message); }
 });
 
-btnLogout.addEventListener('click', async () => { await signOut(auth); authModal.classList.add('hidden'); });
+btnLogout.addEventListener('click', async () => { 
+  await signOut(auth); 
+  authModal.classList.remove('hidden'); 
+});
 
+// --- GUARDIA DE SESIÓN OBLIGATORIA ---
 onAuthStateChanged(auth, async (user) => {
   if (user) {
+    authModal.classList.add('hidden');
     loggedOutView.classList.add('hidden');
     loggedInView.classList.remove('hidden');
     userDisplayEmail.textContent = user.email;
@@ -167,16 +175,18 @@ onAuthStateChanged(auth, async (user) => {
     userDisplayRole.textContent = isAdmin ? "Administrador" : "Cliente";
     pencilBtn.classList.toggle('hidden', !isAdmin);
     btnAuthModal.querySelector('#auth-btn-label').textContent = "Mi Perfil";
+    loadStoreData();
   } else {
+    // Si NO está autenticado, fuerzas inicio de sesión
     loggedOutView.classList.remove('hidden');
     loggedInView.classList.add('hidden');
     pencilBtn.classList.add('hidden');
     btnAuthModal.querySelector('#auth-btn-label').textContent = "Cuenta";
+    authModal.classList.remove('hidden');
   }
-  loadStoreData();
 });
 
-// --- CARGA DE DATOS DESDE FIRESTORE ---
+// --- CARGA DE DATOS FIRESTORE ---
 async function loadStoreData() {
   try {
     const catSnap = await getDocs(collection(db, "categories"));
@@ -200,12 +210,11 @@ async function loadStoreData() {
   } catch (err) { console.error("Error al cargar tienda:", err); }
 }
 
-// --- BÚSQUEDA A PANTALLA COMPLETA ---
+// --- BÚSQUEDA ---
 function executeSearch() {
   const term = searchInput.value.trim().toLowerCase();
   if (!term) return;
 
-  // Guardar en historial
   let history = JSON.parse(localStorage.getItem('searchHistory') || "[]");
   if (!history.includes(term)) {
     history.push(term);
@@ -234,9 +243,7 @@ function executeSearch() {
 }
 
 btnExecuteSearch.addEventListener('click', executeSearch);
-searchInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') executeSearch();
-});
+searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeSearch(); });
 
 btnBackFromSearch.addEventListener('click', () => {
   searchResultsView.classList.add('hidden');
@@ -249,22 +256,11 @@ function renderRecommendedRow() {
   const recSlider = document.getElementById('recommended-slider');
   const searchHistory = JSON.parse(localStorage.getItem('searchHistory') || "[]");
 
-  if (searchHistory.length === 0) {
-    recRow.classList.add('hidden');
-    return;
-  }
+  if (searchHistory.length === 0) { recRow.classList.add('hidden'); return; }
 
-  const recommended = allProducts.filter(p => {
-    return searchHistory.some(term => 
-      p.name.toLowerCase().includes(term) || 
-      p.category.toLowerCase().includes(term)
-    );
-  });
+  const recommended = allProducts.filter(p => searchHistory.some(term => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term)));
 
-  if (recommended.length === 0) {
-    recRow.classList.add('hidden');
-    return;
-  }
+  if (recommended.length === 0) { recRow.classList.add('hidden'); return; }
 
   recRow.classList.remove('hidden');
   recSlider.innerHTML = recommended.map(p => createProductCardHTML(p)).join('');
@@ -275,9 +271,7 @@ function renderFilteredStore() {
   const catFilter = filterCategory.value;
   const priceFilter = filterPrice.value;
 
-  let filtered = allProducts.filter(p => {
-    return (catFilter === 'all') || (p.category === catFilter);
-  });
+  let filtered = allProducts.filter(p => (catFilter === 'all') || (p.category === catFilter));
 
   if (priceFilter === 'asc') filtered.sort((a, b) => a.price - b.price);
   if (priceFilter === 'desc') filtered.sort((a, b) => b.price - a.price);
@@ -300,8 +294,14 @@ function renderFilteredStore() {
   attachCardEvents();
 }
 
+function getFirstImage(imgField) {
+  if (!imgField) return 'https://via.placeholder.com/200x140?text=Sin+Imagen';
+  const imgs = imgField.split(',').map(s => s.trim());
+  return imgs[0] || 'https://via.placeholder.com/200x140?text=Sin+Imagen';
+}
+
 function createProductCardHTML(p) {
-  const imgUrl = (p.image && p.image.startsWith('http')) ? p.image : 'https://via.placeholder.com/200x140?text=Sin+Imagen';
+  const imgUrl = getFirstImage(p.image);
   return `
     <div class="product-card" data-id="${p.id}" style="cursor: pointer;">
       <img src="${imgUrl}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200x140?text=Imagen+Error'">
@@ -320,7 +320,7 @@ function attachCardEvents() {
   });
 }
 
-// --- DETALLE DE PRODUCTO & OPCIONES ---
+// --- DETALLE DE PRODUCTO Y GALERÍA COMPLETA ---
 async function openProductPage(id) {
   const product = allProducts.find(p => p.id === id);
   if (!product) return;
@@ -331,9 +331,30 @@ async function openProductPage(id) {
   document.getElementById('detail-category').textContent = product.category;
   document.getElementById('detail-price').textContent = `$${parseFloat(product.price).toFixed(2)}`;
   document.getElementById('detail-desc').textContent = product.desc || "Sin descripción disponible.";
-  document.getElementById('detail-img').src = product.image || 'https://via.placeholder.com/200x140?text=Sin+Imagen';
 
-  // Renderizar Opciones / Variantes
+  // Configuración de Galería
+  const imageList = product.image ? product.image.split(',').map(s => s.trim()) : [];
+  const mainImg = document.getElementById('detail-img');
+  const thumbsContainer = document.getElementById('detail-gallery-thumbs');
+
+  mainImg.src = imageList[0] || 'https://via.placeholder.com/200x140?text=Sin+Imagen';
+  thumbsContainer.innerHTML = "";
+
+  if (imageList.length > 1) {
+    imageList.forEach((imgUrl, index) => {
+      const thumb = document.createElement('img');
+      thumb.src = imgUrl;
+      thumb.className = `gallery-thumb ${index === 0 ? 'active' : ''}`;
+      thumb.onclick = () => {
+        mainImg.src = imgUrl;
+        document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      };
+      thumbsContainer.appendChild(thumb);
+    });
+  }
+
+  // Renderizar Opciones
   const variantsContainer = document.getElementById('detail-variants');
   variantsContainer.innerHTML = "";
   if (product.variants && product.variants.length > 0 && product.variants[0] !== "") {
@@ -354,7 +375,7 @@ async function openProductPage(id) {
     document.getElementById('detail-variants-container').classList.add('hidden');
   }
 
-  // Renderizar Botones (Agregar al Carrito + Corazón Favoritos)
+  // Renderizar Acciones
   const actionsContainer = document.getElementById('detail-actions-container');
   const isFav = wishlist.some(item => item.id === product.id);
 
@@ -414,7 +435,7 @@ function saveAndRenderCart() {
       total += parseFloat(item.price);
       cartItemsList.innerHTML += `
         <div class="cart-item" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 8px;">
-          <img src="${item.image || 'https://via.placeholder.com/50'}" width="50" height="50" style="object-fit:cover; border-radius:6px;">
+          <img src="${getFirstImage(item.image)}" width="50" height="50" style="object-fit:cover; border-radius:6px;">
           <div style="flex: 1; margin-left: 10px;">
             <strong style="display: block;">${item.name}</strong>
             <span style="font-size:0.85rem; opacity:0.7;">Opción: ${item.selectedVariant}</span>
@@ -435,11 +456,7 @@ document.getElementById('btn-checkout').onclick = () => alert("¡Gracias por tu 
 // --- FAVORITOS (WISHLIST) ---
 function toggleWishlist(product) {
   const index = wishlist.findIndex(item => item.id === product.id);
-  if (index > -1) {
-    wishlist.splice(index, 1);
-  } else {
-    wishlist.push(product);
-  }
+  if (index > -1) { wishlist.splice(index, 1); } else { wishlist.push(product); }
   localStorage.setItem('wishlist', JSON.stringify(wishlist));
   updateWishlistUI();
   openProductPage(product.id);
