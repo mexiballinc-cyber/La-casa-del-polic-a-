@@ -1,0 +1,305 @@
+/* --- VARIABLES Y TEMA OSCURO PREMIUM --- */
+:root {
+  --bg-color: #0d1117;
+  --text-color: #f0f6fc;
+  --card-bg: rgba(22, 27, 34, 0.85);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary-bg: #21262d;
+  --accent-heart: #ef4444;
+  --radius-lg: 14px;
+  --radius-md: 8px;
+}
+
+body.light-theme {
+  --bg-color: #f6f8fa;
+  --text-color: #1f2328;
+  --card-bg: #ffffff;
+  --border-color: #d0d7de;
+  --secondary-bg: #eaeef2;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo, #site-logo {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain;
+}
+
+.brand-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --- BOTONES E ICONOS --- */
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: var(--secondary-bg);
+  color: inherit;
+  border: 1px solid var(--border-color);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.icon-btn {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: var(--radius-md);
+}
+
+.icon-btn-text {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--accent-heart);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 2px 6px;
+}
+
+/* --- ENCABEZADO DE CATÁLOGO Y BÚSQUEDA --- */
+.main-container {
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  flex: 1;
+}
+
+.catalog-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+}
+
+.search-bar svg {
+  color: #8b949e;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+/* --- TARJETAS --- */
+.product-slider {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+}
+
+.product-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  min-width: 160px;
+  max-width: 180px;
+  flex-shrink: 0;
+}
+
+.product-card img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.product-card h3 {
+  font-size: 0.9rem;
+  margin: 8px 0 4px 0;
+}
+
+.product-card .price {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+/* --- MODALES Y FORMULARIOS --- */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+
+.filter-group {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--secondary-bg) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  outline: none;
+}
+
+select option {
+  background-color: var(--bg-color);
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- FOOTER Y BOTÓN ADMIN --- */
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-color);
+  background: var(--card-bg);
+  margin-top: 30px;
+  font-size: 0.85rem;
+}
+
+.btn-admin-footer {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.btn-admin-footer:hover {
+  opacity: 1;
+}
